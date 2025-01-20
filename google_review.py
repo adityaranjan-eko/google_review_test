@@ -5,6 +5,7 @@ from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from flask import Flask, redirect, url_for, request, session, jsonify
+import sys
 
 # Set up Flask app
 app = Flask(__name__)
@@ -21,7 +22,7 @@ SCOPES = ['https://www.googleapis.com/auth/business.manage']
 flow = Flow.from_client_secrets_file(
     CLIENT_SECRETS_FILE,
     scopes=SCOPES,
-    redirect_uri='http://127.0.0.1:5000/oauth2callback'
+    redirect_uri='https://google-review-test.onrender.com/oauth2callback'
 )
 
 # Google My Business API service
@@ -134,4 +135,11 @@ def credentials_to_dict(credentials):
 
 if __name__ == '__main__':
     # app.run(ssl_context=('cert.pem', 'key.pem'),debug=True)
-    app.run(debug=True)
+    host = '0.0.0.0'
+    port = 5000
+    # Allow passing arguments from the command line
+    if len(sys.argv) > 1:
+        host = sys.argv[1]
+    if len(sys.argv) > 2:
+        port = int(sys.argv[2])
+    app.run(host=host, port=port, debug=True)
